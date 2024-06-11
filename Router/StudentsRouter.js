@@ -1,9 +1,10 @@
 const express = require("express");
-const studentRoute = express.Router();
-const studentController = require("../Controller/Students.js");
+const studentsController = require("../Controller/Students.js");
+const studentRouter = express.Router();
 
+studentRouter.get("/year/:year", studentsController.getStudentByYear);
+studentRouter.get("/department/:department", studentsController.getStudentByDept);
+studentRouter.get("/name/:name", studentsController.getStudentByName);
+studentRouter.get("/email/:email", studentsController.getStudentByEmail);
 
-studentRoute.get("/department/year",studentController.getStudentByYear);
-studentRoute.get("/department",studentController.getStudentByDept);
-
-module.exports = studentRoute;
+module.exports = studentRouter;
