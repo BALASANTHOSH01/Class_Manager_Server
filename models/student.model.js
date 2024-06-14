@@ -27,10 +27,17 @@ const studentSchema = new mongoose.Schema({
     department:{
         type:String,
         required:true,
+        lowercase:true,
+        trim:true
     },
     year:{
-        type:Number,
+        type:Number, // Number
         required:true,
+    },
+    section:{
+        type:String,
+        lowercase:true,
+        trim:true
     },
     totalPresent:{
         type: Number,
@@ -46,9 +53,13 @@ const studentSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    parentMobile:{
+    parentNumber:{
         type:String,
         required:true,
+    },
+    batch:{ // optional
+        type:String,
+        trim:true
     },
     createdAt:{
         type:Date,
@@ -66,4 +77,4 @@ studentSchema.methods.isPasswordCorrect = async function(password) {
     return await bcrypt.compare(password,this.password);
 };
 
-module.exports = mongoose.model("student",studentSchema);
+module.exports = mongoose.model("Student",studentSchema);
