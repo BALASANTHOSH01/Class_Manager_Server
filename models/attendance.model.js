@@ -1,6 +1,12 @@
 const mongoose = require("mongoose");
 
 const attendanceSchema = new mongoose.Schema({
+    rollno:{
+        type:String,
+        unique:true,
+        required:true,
+        trim:true
+    },
     student:{
         type:mongoose.Schema.Types.ObjectId,
         required:true,
