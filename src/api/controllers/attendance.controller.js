@@ -1,23 +1,23 @@
 const Attendance = require("../models/attendance.model.js");
 const DateFormator = require("../Services/dateFormator.js");
 
-exports.takeAttendance = async (req,res)=>{
+exports.takeOneAttendance = async (req,res)=>{
     try {
-        const {student_id,takenBy,date,status,rollno} = req.body;
+        const {rollno,student_id,takenBy,date,status} = req.body;
         const formatedDate = DateFormator(date);
 
         // Validate required fields
         if (!student_id || !takenBy || !date || !status || !rollno) {
             return res.status(400).send("All fields are required");
-        }
+        };
 
         // Check if the attendance is already taken or not
         const isExist = await Attendance.findOne({rollno:rollno,date:formatedDate});
         if(isExist){
             return res.status(409).send("Attendance is already taken");
-        }
+        };
 
-        const AttendenceData = await Attendance.create({rollno,student:student_id,formatedDate,status,takenBy});
+        const AttendenceData = await Attendance.create({rollno:rollno,student:student_id,date:formatedDate,status:status,takenBy:takenBy});
 
         res.status(200).send(AttendenceData); // response
 
@@ -86,7 +86,7 @@ exports.getAttendanceByDeptYearandDate = async (req,res)=>{
             .populate({
                 path: 'student',
                 match: { department: dept, year: parseInt(year) },
-                select: 'department year name'
+                select: 'department year name rollno'
             })
             .populate({
                 path: 'takenBy',

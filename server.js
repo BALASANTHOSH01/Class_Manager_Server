@@ -2,10 +2,12 @@ const express = require("express");
 require("dotenv").config();
 const cors = require("cors");
 
-const connectDB = require("./config/db.js"); // db connection
-const authRouter = require("./routes/auth.route.js"); //auth router
-const adminRouter = require("./routes/admin.route.js"); //admin router
-const staffRouter = require("./routes/staff.route.js"); //staff router
+const connectDB = require("./src/config/db.js"); // db connection
+const authRouter = require("./src/api/routes/auth.route.js"); //auth router
+const staffRouter = require("./src/api/routes/staff.route.js"); //staff router
+const attendanceRouter = require("./src/api/routes/attendance.route.js");
+const studentRouter = require("./src/api/routes/student.route.js");
+
 
 const app = express();
 app.use(express.json());
@@ -23,13 +25,14 @@ app.use((err, req, res, next) => {
 });
 
 
-// Route handling
-app.use("/api/auth",authRouter); // authendication routes
-app.use("/api/admin",adminRouter); // admin routes
-app.use("/api/staff",staffRouter); // staff routes
+// Use routers
+app.use("/api/staff", staffRouter);
+app.use("/api/auth", authRouter);
+app.use("/api/students", studentRouter);
+app.use("/api/attendance", attendanceRouter);
 
 
 // Listen to the port
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  console.log(`Server running on port ${port}.`);
 });
