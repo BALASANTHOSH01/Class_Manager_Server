@@ -58,7 +58,7 @@ exports.registerInstitute = async (req, res) => {
         const { name, email, password, pincode, college_code } = req.body;
 
         // Validate required fields
-        if (!name || !email || !password || !pincode || !college_code) {
+        if (!name || !email || !password || !pincode ) {
             return res.status(400).send("All fields are required.");
         }
 
@@ -83,10 +83,10 @@ exports.registerInstitute = async (req, res) => {
 // Institute login
 exports.loginInstitute = async (req,res) => {
     try {
-        const {email,password}= req.params;
+        const {email,password}= req.body;
         //check whether the email and password is correct
         if(!email || !password){
-            return res.status(404).send("")
+            return res.status(404).send("email and password fields are required.");
         };
 
         const instituteData = await Institute.findOne({email:email});

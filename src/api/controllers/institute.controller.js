@@ -3,9 +3,8 @@ const Institute = require("../models/institute.model.js");
 // Update institute account
 exports.updateInstitute = async (req, res) => {
     try {
-        const instituteId = req.params.id;
-        const updates = req.body;
-
+        const {updates,instituteId} = req.body;
+        
         // Update institute document
         const updatedInstitute = await Institute.findByIdAndUpdate(instituteId, updates, { new: true });
 
@@ -24,7 +23,7 @@ exports.updateInstitute = async (req, res) => {
 // Delete institute account
 exports.deleteInstitute = async (req, res) => {
     try {
-        const instituteId = req.params.id;
+        const {instituteId} = req.body;
 
         // Delete institute document
         const deletedInstitute = await Institute.findByIdAndDelete(instituteId);
