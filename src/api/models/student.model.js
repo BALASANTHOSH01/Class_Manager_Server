@@ -61,6 +61,11 @@ const studentSchema = new mongoose.Schema({
         type:String,
         trim:true
     },
+    institute: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Institute',
+        required: true
+    },
     createdAt:{
         type:Date,
         required:true,

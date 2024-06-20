@@ -1,5 +1,6 @@
 const Staff = require("../models/staff.model.js");
-const Admin = require("../models/admin.model.js");
+const Institute = require("../models/institute.model.js");
+const uniqueCodeGenerator = require("../Services/uniqueCodeGenerator.js");
 
 exports.staffRegister = async (req,res)=>{
     try {
@@ -51,45 +52,57 @@ exports.staffLogin = async (req,res)=>{
     }
 }
 
-exports.adminRegister = async (req,res)=>{
+// Create institute account
+exports.registerInstitute = async (req, res) => {
     try {
-        const {instituteName,university,collegeCode,adminName,email,password} = req.body;
+        const { name, email, password, pincode, college_code } = req.body;
 
-        const isExist= await Admin.findOne({email:email});
-        if(isExist){
-            return res.status(409).send("Account already exists");
+        // Validate required fields
+        if (!name || !email || !password || !pincode || !college_code) {
+            return res.status(400).send("All fields are required.");
         }
 
-        const adminData = await Admin.create({instituteName,university,collegeCode,adminName,email,password});
-        res.status(201).send(adminData);
+        // Generate unique code for the institute
+        const unique_code = await uniqueCodeGenerator(name, college_code);
+
+        // Create institute account
+        const instituteData = await Institute.create({ name, email, password, unique_code, pincode, college_code });
+
+        if (!instituteData) {
+            return res.status(500).send("Failed to create institute account.");
+        }
+
+        res.status(200).send(instituteData); // Send the created institute data as response
 
     } catch (error) {
-        console.log("Admin Register error :"+error.message);
+        console.error("Account creation error:", error.message);
+        res.status(500).send("An error occurred while creating institute account.");
     }
-}
+};
 
-exports.adminLogin = async (req,res)=>{
+// Institute login
+exports.loginInstitute = async (req,res) => {
     try {
-        const{email,password} = req.body;
-
+        const {email,password}= req.params;
+        //check whether the email and password is correct
         if(!email || !password){
-            res.send("Invalid user credentials");
-        }
+            return res.status(404).send("")
+        };
 
-        const adminData = await Admin.findOne({email:email});
-        if(!adminData){
+        const instituteData = await Institute.findOne({email:email});
+        if(!instituteData){
             return res.status(404).send("User Not Found");
         }
 
-        const isPasswordCorrect = await adminData.isPasswordCorrect(password);
+        const isPasswordCorrect = await instituteData.isPasswordCorrect(password);
         if (!isPasswordCorrect) {
             return res.status(401).send("Incorrect password");
         }
 
-        res.status(200).send(adminData);
+        res.status(200).send(instituteData);
 
-    } catch (error) {
-        console.log("Admin Login error :"+error.message);
+    }  catch (error) {
+        console.error("Account creation error:", error.message);
+        res.status(500).send("An error occurred while creating institute account.");
     }
 }
-

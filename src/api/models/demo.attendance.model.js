@@ -37,7 +37,11 @@ const demoAttendanceSchema = new mongoose.Schema({
         type:[attendanceRecordSchema],
         default:[]
     },
-    
+    institute: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Institute',
+        required: true
+    },
 });
 
 module.exports = mongoose.model("Attendance",demoAttendanceSchema);

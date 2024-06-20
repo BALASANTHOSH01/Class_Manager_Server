@@ -2,9 +2,9 @@ const express = require("express");
 const router = express.Router();
 const AuthController = require("../controllers/auth.controller.js");
 
-// admin auth
-router.post("/admin/register",AuthController.adminRegister);
-router.post("/admin/login",AuthController.adminLogin);
+//institute auth
+router.post("/institute/register",AuthController.registerInstitute);
+router.post("/institute/login",AuthController.loginInstitute);
 
 // staff auth
 router.post("/staff/register",AuthController.staffRegister);

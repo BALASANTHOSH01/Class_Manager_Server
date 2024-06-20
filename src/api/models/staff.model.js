@@ -46,6 +46,11 @@ const staffSchema = new mongoose.Schema({
             required:true,
         }
     },
+    institute: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Institute',
+        required: true
+    },
     createdAt:{
         type:Date,
         required:true,

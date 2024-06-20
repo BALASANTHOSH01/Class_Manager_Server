@@ -7,7 +7,7 @@ const auth = require("../controllers/auth.controller.js");
 router.delete("/:email",staff.deleteStaff); // delete staff
 router.patch("/:email",staff.updateStaffByEmail); //update staff
 router.post("/register",auth.staffRegister); // create new staff
-router.get("/:email",staff.getStaffByEmail); // get staff 
+router.get("/:email",staff.getStaffByEmail); // login staff 
 
 // Notification routes
 router.get("/notifications"); // get notifications

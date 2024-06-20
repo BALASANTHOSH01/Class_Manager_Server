@@ -5,22 +5,41 @@ const Student = require("../models/student.model.js");
 // Take attendance for a student
 exports.takeOneAttendance = async (req, res) => {
   try {
-    const { semester, rollno, student_id, staff_id, date, status } = req.body;
+    const {
+      semester,
+      rollno,
+      student_id,
+      staff_id,
+      date,
+      status,
+      institute_id,
+    } = req.body;
     const formatedDate = DateFormator(date);
 
     // Validate required fields
-    if (!student_id || !staff_id || !date || !status || !rollno) {
+    if (
+      !student_id ||
+      !staff_id ||
+      !date ||
+      !status ||
+      !rollno ||
+      !institute_id
+    ) {
       return res.status(400).send("All fields are required");
     }
 
     const studentDetails = await Student.findById(student_id);
 
-    // Validate if the student exists and matches the roll number
-    if (!studentDetails || studentDetails.rollno !== rollno) {
+    // Validate if the student exists and matches the roll number and institute
+    if (
+      !studentDetails ||
+      studentDetails.rollno !== rollno ||
+      studentDetails.institute.toString() !== institute_id
+    ) {
       return res
         .status(409)
         .send(
-          "Student ID and roll number do not match or student does not exist."
+          "Student ID, roll number, or institute ID do not match, or student does not exist."
         );
     }
 
@@ -28,6 +47,7 @@ exports.takeOneAttendance = async (req, res) => {
     let attendance = await Attendance.findOne({
       rollno: rollno,
       student: student_id,
+      institute: institute_id,
     });
 
     if (!attendance) {
@@ -36,25 +56,18 @@ exports.takeOneAttendance = async (req, res) => {
         student: student_id,
         rollno: rollno,
         semester: semester,
+        institute: institute_id,
         attendance: [],
       });
       console.log("document created");
     }
 
     // Check if the attendance for the given date already exists
-    const isPresentExist = await attendance.attendance.some(
-      (details) =>
-        details.status === "present" &&
-        details.date.getTime() === new Date(formatedDate).getTime()
+    const isAttendanceExist = attendance.attendance.some(
+      (details) => details.date.getTime() === new Date(formatedDate).getTime()
     );
 
-    const isAbsentExist = await attendance.attendance.some(
-      (details) =>
-        details.status === "absent" &&
-        details.date.getTime() === new Date(formatedDate).getTime()
-    );
-
-    if (isPresentExist || isAbsentExist) {
+    if (isAttendanceExist) {
       return res
         .status(409)
         .send("Attendance is already taken for the given date.");
@@ -83,7 +96,6 @@ exports.takeOneAttendance = async (req, res) => {
 // Take attendance for multiple students
 exports.takeManyAttendance = async (req, res) => {
   try {
-
     const attendanceList = req.body;
 
     if (!Array.isArray(attendanceList)) {
@@ -96,12 +108,26 @@ exports.takeManyAttendance = async (req, res) => {
     };
 
     for (const attendanceRecord of attendanceList) {
-      const { semester, rollno, student_id, staff_id, date, status } =
-        attendanceRecord;
+      const {
+        semester,
+        rollno,
+        student_id,
+        staff_id,
+        date,
+        status,
+        institute_id,
+      } = attendanceRecord;
       const formattedDate = DateFormator(date);
-      
+
       // Validate required fields
-      if (!student_id || !staff_id || !date || !status || !rollno) {
+      if (
+        !student_id ||
+        !staff_id ||
+        !date ||
+        !status ||
+        !rollno ||
+        !institute_id
+      ) {
         results.errors.push({
           record: attendanceRecord,
           message: "All fields are required",
@@ -112,12 +138,16 @@ exports.takeManyAttendance = async (req, res) => {
       try {
         const studentDetails = await Student.findById(student_id);
 
-        // Validate if the student exists and matches the roll number
-        if (!studentDetails || studentDetails.rollno !== rollno) {
+        // Validate if the student exists and matches the roll number and institute
+        if (
+          !studentDetails ||
+          studentDetails.rollno !== rollno ||
+          studentDetails.institute.toString() !== institute_id
+        ) {
           results.errors.push({
             record: attendanceRecord,
             message:
-              "Student ID and roll number do not match or student does not exist.",
+              "Student ID, roll number, or institute ID do not match, or student does not exist.",
           });
           continue;
         }
@@ -126,6 +156,7 @@ exports.takeManyAttendance = async (req, res) => {
         let attendance = await Attendance.findOne({
           rollno: rollno,
           student: student_id,
+          institute: institute_id,
         });
 
         if (!attendance) {
@@ -134,6 +165,7 @@ exports.takeManyAttendance = async (req, res) => {
             student: student_id,
             rollno: rollno,
             semester: semester,
+            institute: institute_id,
             attendance: [],
           });
           await attendance.save();
@@ -141,7 +173,8 @@ exports.takeManyAttendance = async (req, res) => {
 
         // Check if the attendance for the given date already exists
         const isAttendanceExist = attendance.attendance.some(
-          (details) => details.date.getTime() === formattedDate.getTime()
+          (details) =>
+            details.date.getTime() === new Date(formattedDate).getTime()
         );
 
         if (isAttendanceExist) {
@@ -155,7 +188,7 @@ exports.takeManyAttendance = async (req, res) => {
         // Create attendance detail
         const attendanceDetail = {
           status: status,
-          date: formattedDate,
+          date: new Date(formattedDate),
           staff: staff_id,
         };
 
@@ -184,23 +217,25 @@ exports.takeManyAttendance = async (req, res) => {
   }
 };
 
-
 // Update attendance status for a specific rollno
 exports.updateAttendance = async (req, res) => {
   try {
     const date = DateFormator(req.params.date);
     const rollno = req.params.rollno;
-    const { status, staff } = req.body; // Added staff to request body
+    const { status, staff, institute_id } = req.body; // Added staff to request body
 
     // Validation
-    if (!date || !rollno || !status || !staff) {
+    if (!date || !rollno || !status || !staff || !institute_id) {
       return res
         .status(400)
-        .send("Date, rollno, status, and staff_id are required.");
+        .send("Date, rollno, status, staff_id, and institute_id are required.");
     }
 
     // Find the attendance document
-    const attendance = await Attendance.findOne({ rollno });
+    const attendance = await Attendance.findOne({
+      rollno,
+      institute: institute_id,
+    });
 
     if (!attendance) {
       return res
@@ -215,7 +250,7 @@ exports.updateAttendance = async (req, res) => {
       (data) => data.date.getTime() === formattedDate.getTime()
     );
 
-    // check if the attendance is found
+    // Check if the attendance is found
     if (!attendanceDetail) {
       return res
         .status(404)
@@ -237,83 +272,85 @@ exports.updateAttendance = async (req, res) => {
 
 // Update many students attendance
 exports.updateManyAttendance = async (req, res) => {
-    try {
-      const attendanceList = req.body;
-      
-      // Check if the input is an array
-      if (!Array.isArray(attendanceList)) {
-        return res.status(400).send("Details is not an array");
+  try {
+    const attendanceList = req.body;
+
+    // Check if the input is an array
+    if (!Array.isArray(attendanceList)) {
+      return res.status(400).send("Details is not an array");
+    }
+
+    const results = {
+      successes: [],
+      errors: [],
+    };
+
+    for (const attendanceRecord of attendanceList) {
+      const { rollno, staff, date, status, institute_id } = attendanceRecord;
+
+      // Validation
+      if (!date || !rollno || !status || !staff || !institute_id) {
+        results.errors.push({
+          record: attendanceRecord,
+          message:
+            "Date, rollno, status, staff_id, and institute_id are required.",
+        });
+        continue;
       }
-  
-      const results = {
-        successes: [],
-        errors: []
-      };
-  
-      for (const attendanceRecord of attendanceList) {
-        const { rollno, staff, date, status } = attendanceRecord;
-  
-        // Validation
-        if (!date || !rollno || !status || !staff) {
+
+      try {
+        // Find the attendance document
+        const attendance = await Attendance.findOne({
+          rollno,
+          institute: institute_id,
+        });
+
+        if (!attendance) {
           results.errors.push({
             record: attendanceRecord,
-            message: "Date, rollno, status, and staff_id are required."
+            message: "Attendance record not found for this rollno.",
           });
           continue;
         }
-  
-        try {
-          // Find the attendance document
-          const attendance = await Attendance.findOne({ rollno });
-  
-          if (!attendance) {
-            results.errors.push({
-              record: attendanceRecord,
-              message: "Attendance record not found for this rollno."
-            });
-            continue;
-          }
-          console.log("Attendance :"+attendance);
-  
-          // Check if the attendance for the given date exists
-          const formattedDate = new Date(DateFormator(date));
-          const attendanceDetail = attendance.attendance.find(
-            (data) => data.date.getTime() === formattedDate.getTime()
-          );
-  
-          if (!attendanceDetail) {
-            results.errors.push({
-              record: attendanceRecord,
-              message: "Attendance record not found for the given date."
-            });
-            continue;
-          }
-  
-          // Update the status and staff in the attendance detail
-          attendanceDetail.status = status;
-          attendanceDetail.staff = staff;
-  
-          // Save the updated attendance document
-          await attendance.save();
-          results.successes.push(attendanceRecord);
-  
-        } catch (error) {
-          console.error("Error updating record for rollno " + rollno + ": " + error.message);
+
+        // Check if the attendance for the given date exists
+        const formattedDate = new Date(DateFormator(date));
+        const attendanceDetail = attendance.attendance.find(
+          (data) => data.date.getTime() === formattedDate.getTime()
+        );
+
+        if (!attendanceDetail) {
           results.errors.push({
             record: attendanceRecord,
-            message: "An error occurred while updating attendance."
+            message: "Attendance record not found for the given date.",
           });
+          continue;
         }
-      }
-  
-      res.status(200).send(results); // Send consolidated response
-  
-    } catch (error) {
-      console.error("Attendance updating error: " + error.message);
-      res.status(500).send("An error occurred while updating attendance.");
-    }
-};
 
+        // Update the status and staff in the attendance detail
+        attendanceDetail.status = status;
+        attendanceDetail.staff = staff;
+
+        // Save the updated attendance document
+        await attendance.save();
+        results.successes.push(attendanceRecord);
+      } catch (error) {
+        console.error(
+          "Error updating record for rollno " + rollno + ": " + error.message
+        );
+        results.errors.push({
+          record: attendanceRecord,
+          message: "An error occurred while updating attendance.",
+        });
+      }
+    }
+
+    res.status(200).send(results); // Send consolidated response
+  } catch (error) {
+    console.error("Attendance updating error: " + error.message);
+    res.status(500).send("An error occurred while updating attendance.");
+  }
+};
 
 // Get attendance by department, year, and date
 exports.getAttendanceByDeptYearandDate = async (req, res) => {
@@ -321,15 +358,22 @@ exports.getAttendanceByDeptYearandDate = async (req, res) => {
     const date = DateFormator(req.params.date);
     const dept = req.params.department;
     const year = req.params.year;
+    const institute_id = req.body.institute_id;
 
     // Validation
-    if (!date || !dept || !year) {
-      return res.status(400).send("Date, department, and year are required.");
+    if (!date || !dept || !year || !institute_id) {
+      return res
+        .status(400)
+        .send("Date, department, year, and institute_id are required.");
     }
 
     // Find attendance by date and populate student and staff fields
     const AttendanceList = await Attendance.find({
-      $or: [{ "presentDates.date": date }, { "absentDates.date": date }],
+      institute: institute_id,
+      "attendance.date": {
+        $gte: new Date(date).setHours(0, 0, 0, 0),
+        $lt: new Date(date).setHours(23, 59, 59, 999),
+      },
     }).populate({
       path: "student",
       match: { department: dept, year: parseInt(year) },
@@ -357,15 +401,19 @@ exports.getAttendanceByDeptandYear = async (req, res) => {
     const dept = req.params.department;
     const year = req.params.year;
     const semester = req.body.semester;
+    const institute_id = req.body.institute_id;
 
     // Validation
-    if (!dept || !year) {
-      return res.status(400).send("Department and year are required.");
+    if (!dept || !year || !semester || !institute_id) {
+      return res
+        .status(400)
+        .send("Department, year, semester, and institute_id are required.");
     }
 
     // Find attendance by department and year and populate student and staff fields
     const AttendanceList = await Attendance.find({
       semester: semester,
+      institute: institute_id,
     }).populate({
       path: "student",
       match: { department: dept, year: parseInt(year) },
@@ -389,13 +437,17 @@ exports.getAttendanceByDeptandYear = async (req, res) => {
 exports.getAttendanceByRollno = async (req, res) => {
   try {
     const rollno = req.params.rollno;
+    const institute_id = req.body.institute_id;
 
     // Validation
-    if (!rollno) {
-      return res.status(400).send("Roll number is required.");
+    if (!rollno || !institute_id) {
+      return res.status(400).send("Roll number and institute_id are required.");
     }
 
-    const AttendanceData = await Attendance.findOne({ rollno })
+    const AttendanceData = await Attendance.findOne({
+      rollno,
+      institute: institute_id,
+    })
       .populate("student", "name rollno department year")
       .populate("staff", "name year");
 
@@ -416,28 +468,20 @@ exports.getAttendanceByRollno = async (req, res) => {
 exports.getAttendanceByDate = async (req, res) => {
   try {
     const date = DateFormator(req.params.date);
+    const institute_id = req.body.institute_id;
 
     // Validation
-    if (!date) {
-      return res.status(400).send("Date is required.");
+    if (!date || !institute_id) {
+      return res.status(400).send("Date and institute_id are required.");
     }
 
     // Find attendance by date
     const AttendanceList = await Attendance.find({
-      $or: [
-        {
-          "presentDates.date": {
-            $gte: new Date(date).setHours(0, 0, 0, 0),
-            $lt: new Date(date).setHours(23, 59, 59, 999),
-          },
-        },
-        {
-          "absentDates.date": {
-            $gte: new Date(date).setHours(0, 0, 0, 0),
-            $lt: new Date(date).setHours(23, 59, 59, 999),
-          },
-        },
-      ],
+      institute: institute_id,
+      "attendance.date": {
+        $gte: new Date(date).setHours(0, 0, 0, 0),
+        $lt: new Date(date).setHours(23, 59, 59, 999),
+      },
     })
       .populate("student", "name rollno department year")
       .populate("staff", "name year");
@@ -452,3 +496,4 @@ exports.getAttendanceByDate = async (req, res) => {
     res.status(500).send("An error occurred while retrieving attendance.");
   }
 };
+
