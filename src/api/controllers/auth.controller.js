@@ -1,32 +1,44 @@
+require("dotenv").config();
+const jwt = require("jsonwebtoken");
 const Staff = require("../models/staff.model.js");
 const Institute = require("../models/institute.model.js");
 const uniqueCodeGenerator = require("../Services/uniqueCodeGenerator.js");
 
+//staff register
 exports.staffRegister = async (req,res)=>{
     try {
         const role = "Staff";
 
-        const {name,email,password,phoneNumber,depart,year,section} = req.body;
+        const {name,email,password,phoneNumber,depart,year,section,institute} = req.body;
 
-        //Check user exist
+        // check all fields are there
+        if(!name || !email || !password || !phoneNumber || !depart || !year || !section || !institute){
+            return res.status(409).send("All fields are required.");
+        };
+
+        //Check user already exist
         const isExist = await Staff.findOne({email:email});
         if(isExist){
             return res.status(409).send("User already exist");
-        }
+        };
 
         const staffData = await Staff.create({name,email,password,phoneNumber,role,assigned_sections: {
             department: depart,
             year: year,
             section: section
-        }});
+        },institute:institute});
 
-        res.status(201).send(staffData);
+        // JWT token creation
+        const token = jwt.sign({staff_id:staffData._id,role:"staff"},process.env.JWT_ACCESS_TOKEN,{expiresIn: '5h' });
+
+        res.status(201).json({staffData,token});
 
     } catch (error) {
         console.log("Staff Register error :"+error.message);
     }
-}
+};
 
+//staff login
 exports.staffLogin = async (req,res)=>{
     try {
         const{email,password} = req.body;
@@ -43,14 +55,17 @@ exports.staffLogin = async (req,res)=>{
         const isPasswordCorrect = await staffData.isPasswordCorrect(password);
         if (!isPasswordCorrect) {
             return res.status(401).send("Incorrect password");
-        }
+        };
 
-        res.status(200).send(staffData);
+        // JWT token creation
+        const token = jwt.sign({staff_id:staffData._id,role:"staff"},process.env.JWT_ACCESS_TOKEN,{expiresIn: '5h' });
+
+        res.status(200).json({staffData,token});
 
     } catch (error) {
         console.log("Staff Login error :"+error.message);
     }
-}
+};
 
 // Create institute account
 exports.registerInstitute = async (req, res) => {
@@ -70,9 +85,12 @@ exports.registerInstitute = async (req, res) => {
 
         if (!instituteData) {
             return res.status(500).send("Failed to create institute account.");
-        }
+        };
 
-        res.status(200).send(instituteData); // Send the created institute data as response
+          // JWT token creation
+          const token = jwt.sign({institute_id:instituteData._id,role:"institute"},process.env.JWT_ACCESS_TOKEN,{expiresIn: '5h' });
+
+          res.status(200).json({instituteData,token}); // Send the created institute data as response
 
     } catch (error) {
         console.error("Account creation error:", error.message);
@@ -97,12 +115,16 @@ exports.loginInstitute = async (req,res) => {
         const isPasswordCorrect = await instituteData.isPasswordCorrect(password);
         if (!isPasswordCorrect) {
             return res.status(401).send("Incorrect password");
-        }
+        };
 
-        res.status(200).send(instituteData);
+        
+        // JWT token creation
+        const token = jwt.sign({institute_id:instituteData._id,role:"institute"},process.env.JWT_ACCESS_TOKEN,{expiresIn: '5h' });
+
+        res.status(200).json({instituteData,token});
 
     }  catch (error) {
         console.error("Account creation error:", error.message);
         res.status(500).send("An error occurred while creating institute account.");
     }
-}
+};
