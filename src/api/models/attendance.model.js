@@ -15,6 +15,11 @@ const attendanceRecordSchema = new mongoose.Schema({
         ref: "Staff",
         required:true
     },
+    createdAt: {
+        type: Date,
+        required: true,
+        default: Date.now,
+    },
 });
 
 

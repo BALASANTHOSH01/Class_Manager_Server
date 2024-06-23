@@ -1,5 +1,5 @@
 const Attendance = require("../models/attendance.model.js");
-const DateFormator = require("../Services/dateFormator.js");
+const DateFormator = require("../utils/dateFormator.js");
 const Student = require("../models/student.model.js");
 
 
