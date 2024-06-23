@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const Staff = require("../models/staff.model.js");
 const Institute = require("../models/institute.model.js");
+const Student = require("../models/student.model.js");
 
 const auth = async (req, res, next) => {
   try {
@@ -8,19 +9,17 @@ const auth = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_ACCESS_TOKEN);
 
     let user;
-    let role;
-    let instituteId; // Declare instituteId variable
+    let InstituteId;
 
     if (decoded.staff_id) {
-      user = await Staff.findOne({ _id: decoded.staff_id }).populate(
-        "institute"
-      );
-      role = "staff";
-      instituteId = user.institute._id;
+      user = await Staff.findOne({ _id: decoded.staff_id });
+      InstituteId = user.institute;
     } else if (decoded.institute_id) {
-      user = await Institute.findOne({ _id: decoded.institute_id });
-      role = "institute";
-      instituteId = user._id;
+      user = await Institute.findById({ _id: decoded.institute_id });
+      InstituteId = user.id;
+    } else if (decoded.student_id) {
+      user = await Student.findById(decoded.student_id);
+      InstituteId = user.institute;
     }
 
     if (!user) {
@@ -28,8 +27,8 @@ const auth = async (req, res, next) => {
     }
 
     req.user = user;
-    req.instituteId = instituteId;
-    req.user.role = role;
+    req.instituteId = InstituteId;
+    req.user.role = decoded.role;
     req.token = token;
 
     next();

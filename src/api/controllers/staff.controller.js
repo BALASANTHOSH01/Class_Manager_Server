@@ -2,10 +2,13 @@ const Staff = require("../models/staff.model.js");
 const bcrypt = require("bcrypt");
 
 //update staff details by email
-exports.updateStaffByEmail = async (req,res)=>{
+exports.updateStaff = async (req,res)=>{
     try {
         const institute = req.instituteId;
         const email = req.params.email;
+        if(email !== req.user.email){
+            return res.status(403).send("Data is not matching.");
+        }
         const updatedData = req.body;
 
         //check if the updating data is present
@@ -41,6 +44,9 @@ exports.deleteStaff = async (req,res)=>{
     try {
         const institute = req.instituteId;
         const email = req.params.email;
+        if(email !== req.user.email){
+            return res.status(403).send("Data is not matching.");
+        }
         const isdeleted = await Staff.findOneAndDelete({ email:email, institute:institute });
         if(!isdeleted){
             return res.status(404).send("Staff not found");
@@ -53,7 +59,7 @@ exports.deleteStaff = async (req,res)=>{
     }
 };
 
-exports.getStaffByEmail = async (req,res)=>{
+exports.getStaff = async (req,res)=>{
     try {
         const institute = req.instituteId;
         const email = req.params.email;

@@ -1,10 +1,17 @@
-const role = (role) =>{
-    return (req, res, next) =>{
-        if(req.user.role !== role){
+exports.allowedRole = (...roles) => {
+    return (req, res, next) => {
+        if (!roles.includes(req.user.role)) {
             return res.status(403).send("Access denied.");
         }
         next();
-    }
+    };
 };
 
-module.exports = role;
+exports.notAllowedRole = (...roles) => {
+    return (req, res, next) => {
+        if (roles.includes(req.user.role)) {
+            return res.status(403).send("Access denied.");
+        }
+        next();
+    };
+};

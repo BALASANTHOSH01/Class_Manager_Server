@@ -45,10 +45,11 @@ exports.deleteInstitute = async (req, res) => {
 exports.getInstituteByName = async (req, res) => {
     try {
         let name = req.params.name;
+        console.log("college name"+name)
         if (!name) {
             return res.status(409).send("Name is required.");
         }
-        name = name.toLowerCase();
+        
         
        // Create a regex pattern for partial matching
        const regex = new RegExp(name, 'i'); // 'i' for case-insensitive

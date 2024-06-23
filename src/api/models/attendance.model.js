@@ -1,31 +1,47 @@
 const mongoose = require("mongoose");
 
-const attendanceSchema = new mongoose.Schema({
-    rollno:{
+const attendanceRecordSchema = new mongoose.Schema({
+    status:{
         type:String,
-        unique:true,
         required:true,
         trim:true
-    },
-    student:{
-        type:mongoose.Schema.Types.ObjectId,
-        required:true,
-        ref: 'Student'
     },
     date:{
         type:Date,
         required:true
     },
-    status:{
-        type:String,
-        enum: ['present', 'absent'],
-        required:true
-    },
-    takenBy:{
+    staff:{
         type:mongoose.Schema.Types.ObjectId,
-        required:true,
-        ref:"Staff"
+        ref: "Staff",
+        required:true
     },
 });
 
-module.exports = mongoose.model("Attendance",attendanceSchema);
+
+const AttendanceSchema = new mongoose.Schema({
+    student:{
+        type:mongoose.Schema.Types.ObjectId,
+        required:true,
+        ref: 'Student'
+    },
+    rollno:{
+        type:String,
+        required:true,
+       unique:true,
+    },
+    semester: {
+        type: String, 
+        required: true
+    },
+    attendance:{
+        type:[attendanceRecordSchema],
+        default:[]
+    },
+    institute: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Institute',
+        required: true
+    },
+});
+
+module.exports = mongoose.model("Attendance",AttendanceSchema);
