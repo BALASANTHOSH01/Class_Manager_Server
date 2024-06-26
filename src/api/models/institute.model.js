@@ -31,6 +31,13 @@ const instituteSchema = new mongoose.Schema({
         type:String,
         unique:true
     },
+    notifyParents:{
+        type:Boolean,
+        default:true
+    },
+    smsPreferences: {
+        sendTime: { type: String, default: '10:00' }, // Default to 10:00 AM
+    },
 });
 
 instituteSchema.pre("save",async function(next) {

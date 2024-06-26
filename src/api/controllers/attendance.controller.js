@@ -1,7 +1,7 @@
 const Attendance = require("../models/attendance.model.js");
 const DateFormator = require("../utils/dateFormator.js");
 const Student = require("../models/student.model.js");
-
+const isCurrentDate = require("../utils/isCurrentDate.js");
 
 // Take attendance for a student
 exports.takeOneAttendance = async (req, res) => {
@@ -42,6 +42,11 @@ exports.takeOneAttendance = async (req, res) => {
           "Student ID, roll number do not match, or student does not exist."
         );
     };
+
+    // Check if the date is the current date
+    if (!isCurrentDate(formatedDate)) {
+      return res.status(400).send("Attendance can only be taken for the current date.");
+    }
 
     if(studentDetails.institute.toString() !== institute.toString()){
       return res.status(409).send("Institute is not matching");
@@ -154,6 +159,15 @@ exports.takeManyAttendance = async (req, res) => {
           continue;
         };
 
+         // Check if the date is the current date
+      if (!isCurrentDate(formattedDate)) {
+        results.errors.push({
+          record: attendanceRecord,
+          message: "Attendance can only be taken for the current date.",
+        });
+        continue;
+      }
+
         if(studentDetails.institute.toString() !== institute.toString()){
           return res.status(409).send("Institute is not matching");
         };
@@ -175,7 +189,7 @@ exports.takeManyAttendance = async (req, res) => {
             attendance: [],
           });
           await attendance.save();
-        }
+        };
 
         // Check if the attendance for the given date already exists
         const isAttendanceExist = attendance.attendance.some(

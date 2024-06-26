@@ -66,6 +66,10 @@ const studentSchema = new mongoose.Schema({
         ref: 'Institute',
         required: true
     },
+    notifyParents:{
+        type:Boolean,
+        default:true
+    },
     createdAt:{
         type:Date,
         required:true,
