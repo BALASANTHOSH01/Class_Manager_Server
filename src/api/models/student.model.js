@@ -70,6 +70,14 @@ const studentSchema = new mongoose.Schema({
         type:Boolean,
         default:true
     },
+    resetPassword:{
+        token:{
+            type:String,
+        },
+        expires:{
+            type:Date
+        }
+    },
     createdAt:{
         type:Date,
         required:true,

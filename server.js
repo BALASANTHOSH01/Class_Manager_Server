@@ -9,6 +9,7 @@ const attendanceRouter = require("./src/api/routes/attendance.route.js");
 const studentRouter = require("./src/api/routes/student.route.js");
 const instituteRouter = require("./src/api/routes/institute.route.js");
 const smsScheduler = require("./src/api/Schedule/smsScheduler.js");
+const passwordRouter = require("./src/api/routes/password.route.js");
 
 const app = express();
 app.use(express.json());
@@ -46,6 +47,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/students", studentRouter);
 app.use("/api/attendance", attendanceRouter);
 app.use("/api/institute", instituteRouter);
+app.use("/api", passwordRouter);
 
 
 // Listen to the port

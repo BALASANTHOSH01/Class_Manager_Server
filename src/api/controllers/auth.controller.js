@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const Staff = require("../models/staff.model.js");
 const Institute = require("../models/institute.model.js");
 const Student = require("../models/student.model.js");
+const uniqueCodeGenerator = require("../utils/uniqueCodeGenerator.js");
 
 // Staff Register
 exports.staffRegister = async (req, res) => {
