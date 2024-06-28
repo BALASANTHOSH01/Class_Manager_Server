@@ -1,5 +1,5 @@
 const cron = require('node-cron');
-const { sendSMS } = require('../services/smsService');
+const { sendSMS } = require('../services/smsService.js');
 const Student = require("../models/student.model.js");
 const Institute = require("../models/institute.model.js");
 

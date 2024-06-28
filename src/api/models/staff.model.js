@@ -51,6 +51,14 @@ const staffSchema = new mongoose.Schema({
         ref: 'Institute',
         required: true
     },
+    resetPassword:{
+        token:{
+            type:String,
+        },
+        expires:{
+            type:Date
+        }
+    },
     createdAt:{
         type:Date,
         required:true,

@@ -38,6 +38,19 @@ const instituteSchema = new mongoose.Schema({
     smsPreferences: {
         sendTime: { type: String, default: '10:00' }, // Default to 10:00 AM
     },
+    resetPassword:{
+        token:{
+            type:String,
+        },
+        expires:{
+            type:Date
+        }
+    },
+    createdAt:{
+        type:Date,
+        required:true,
+        default:()=> Date.now()
+    }
 });
 
 instituteSchema.pre("save",async function(next) {
