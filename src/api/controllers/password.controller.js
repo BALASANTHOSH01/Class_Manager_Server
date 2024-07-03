@@ -2,7 +2,7 @@ const crypto = require("crypto");
 const Student = require("../models/student.model.js");
 const Staff = require("../models/staff.model.js");
 const Institute = require("../models/institute.model.js");
-const sendEmail = require("../services/sendEmail.js");
+const sendEmail = require("../Services/sendEmail.js");
 const bcrypt = require("bcrypt");
 require("dotenv").config();
 
