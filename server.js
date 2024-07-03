@@ -8,7 +8,7 @@ const staffRouter = require("./src/api/routes/staff.route.js"); //staff router
 const attendanceRouter = require("./src/api/routes/attendance.route.js");
 const studentRouter = require("./src/api/routes/student.route.js");
 const instituteRouter = require("./src/api/routes/institute.route.js");
-const smsScheduler = require("./src/api/Schedule/smsScheduler.js");
+// const smsScheduler = require("./src/api/Schedule/smsScheduler.js");
 const passwordRouter = require("./src/api/routes/password.route.js");
 
 const app = express();
@@ -32,7 +32,7 @@ const port = process.env.PORT || 3000;
 connectDB();
 
 // Initialize the SMS functionality
-smsScheduler();
+// smsScheduler();
 
 // Error handling middleware
 app.use((err, req, res, next) => {
