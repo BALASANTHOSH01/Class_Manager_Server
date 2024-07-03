@@ -4,6 +4,7 @@ const Staff = require("../models/staff.model.js");
 const Institute = require("../models/institute.model.js");
 const sendEmail = require("../services/sendEmail.js");
 const bcrypt = require("bcrypt");
+require("dotenv").config();
 
 // Generate random token
 const generateToken = () => {
@@ -41,8 +42,10 @@ exports.forgotPassword = async (req, res) => {
 
     await user.save();
 
+    const API_URL=process.env.API_URL;
+
     // Send reset email 
-    const resetUrl = `${req.protocol}://${req.get("host")}/reset-password/${token}`;
+    const resetUrl = `${API_URL}/reset-password/${token}`;
     const subject = "Reset Your 'Class Manager' Password!";
     const message = `You are receiving this because you (or someone else) have requested the reset of the password for your account.
     Please click on the following link, or paste this into your browser to complete the process:
