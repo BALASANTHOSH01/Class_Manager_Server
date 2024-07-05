@@ -20,7 +20,6 @@ const instituteSchema = new mongoose.Schema({
     },
     unique_code:{
         type:String,
-        required:true,
         unique:true
     },
     pincode:{

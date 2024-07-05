@@ -41,12 +41,10 @@ const studentSchema = new mongoose.Schema({
     },
     totalPresent:{
         type: Number,
-        required:true,
         default:0
     },
     totalAbsent:{
         type: Number,
-        required:true,
         default:0
     },
     phoneNumber:{
@@ -55,7 +53,7 @@ const studentSchema = new mongoose.Schema({
     },
     parentNumber:{
         type:String,
-        required:true,
+        required:true
     },
     batch:{ // optional
         type:String,
