@@ -11,7 +11,7 @@ exports.staffRegister = async (req, res) => {
     const role = "staff";
     const { name, email, password, phoneNumber, depart, year, section, institute } = req.body;
 
-    if (!name || !email || !password || !phoneNumber || !depart || !year || !section || !institute) {
+    if (!name || !email || !password || !phoneNumber || !institute) {
       return res.status(409).send("All fields are required.");
     }
 
