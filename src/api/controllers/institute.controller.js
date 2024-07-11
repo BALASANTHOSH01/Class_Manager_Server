@@ -3,11 +3,10 @@ const Institute = require("../models/institute.model.js");
 // Update institute account
 exports.updateInstitute = async (req, res) => {
     try {
-        const {updates} = req.body;
-        const institute = req.instituteId;
+        const {email,updates} = req.body;
         
         // Update institute document
-        const updatedInstitute = await Institute.findByIdAndUpdate(institute, updates, { new: true });
+        const updatedInstitute = await Institute.findOneAndUpdate({email:email}, updates, { new: true });
 
         if (!updatedInstitute) {
             return res.status(404).send("Institute not found.");
