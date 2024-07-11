@@ -4,6 +4,7 @@ const Staff = require("../models/staff.model.js");
 const Institute = require("../models/institute.model.js");
 const Student = require("../models/student.model.js");
 const uniqueCodeGenerator = require("../utils/uniqueCodeGenerator.js");
+const setTokenCookie = require("../utils/setTokenCookie.js");
 
 // Staff Register
 exports.staffRegister = async (req, res) => {
@@ -30,9 +31,12 @@ exports.staffRegister = async (req, res) => {
       institute,
     });
 
-    const token = jwt.sign({ staff_id: staffData._id, role:"staff" }, process.env.JWT_ACCESS_TOKEN, { expiresIn: "5h" });
+    const token = jwt.sign({ staff_id: staffData._id, role:"staff" }, process.env.JWT_ACCESS_TOKEN, { expiresIn: "24h" });
 
-    res.status(201).json({ staffData, token });
+    // set token is cookies
+    setTokenCookie(res, "token",token);
+
+    res.status(201).json({ staffData });
   } catch (error) {
     console.log("Staff Register error: " + error.message);
   }
@@ -57,9 +61,12 @@ exports.staffLogin = async (req, res) => {
       return res.status(401).send("Incorrect password");
     }
 
-    const token = jwt.sign({ staff_id: staffData._id, role: "staff" }, process.env.JWT_ACCESS_TOKEN, { expiresIn: "5h" });
+    const token = jwt.sign({ staff_id: staffData._id, role: "staff" }, process.env.JWT_ACCESS_TOKEN, { expiresIn: "24h" });
 
-    res.status(200).json({ staffData, token });
+    // set token is cookies
+    setTokenCookie(res, "token",token);
+
+    res.status(200).json({ staffData });
   } catch (error) {
     console.log("Staff Login error: " + error.message);
   }
@@ -85,9 +92,12 @@ exports.registerInstitute = async (req, res) => {
       college_code,
     });
 
-    const token = jwt.sign({ institute_id: instituteData._id, role: "institute" }, process.env.JWT_ACCESS_TOKEN, { expiresIn: "5h" });
+    const token = jwt.sign({ institute_id: instituteData._id, role: "institute" }, process.env.JWT_ACCESS_TOKEN, { expiresIn: "24h" });
 
-    res.status(200).json({ instituteData, token });
+    // set token is cookies
+    setTokenCookie(res, "token",token);
+
+    res.status(200).json({ instituteData });
   } catch (error) {
     console.error("Account creation error:", error.message);
     res.status(500).send("An error occurred while creating institute account.");
@@ -113,9 +123,12 @@ exports.loginInstitute = async (req, res) => {
       return res.status(401).send("Incorrect password");
     }
 
-    const token = jwt.sign({ institute_id: instituteData._id, role: "institute" }, process.env.JWT_ACCESS_TOKEN, { expiresIn: "5h" });
+    const token = jwt.sign({ institute_id: instituteData._id, role: "institute" }, process.env.JWT_ACCESS_TOKEN, { expiresIn: "24h" });
 
-    res.status(200).json({ instituteData, token });
+    // set token is cookies
+    setTokenCookie(res, "token",token);
+
+    res.status(200).json({ instituteData });
   } catch (error) {
     console.error("Account creation error:", error.message);
     res.status(500).send("An error occurred while creating institute account.");
@@ -152,9 +165,12 @@ exports.createStudent = async (req, res) => {
       institute,
     });
 
-    const token = jwt.sign({ student_id: studentData._id, role: "student" }, process.env.JWT_ACCESS_TOKEN, { expiresIn: "5h" });
+    const token = jwt.sign({ student_id: studentData._id, role: "student" }, process.env.JWT_ACCESS_TOKEN, { expiresIn: "24h" });
 
-    res.status(200).json({ studentData, token });
+    // set token is cookies
+    setTokenCookie(res, "token",token);
+
+    res.status(200).json({ studentData });
   } catch (error) {
     console.log("Student creation error: " + error.message);
     res.status(500).send("Server error.");
@@ -180,9 +196,12 @@ exports.loginStudent = async (req, res) => {
       return res.status(401).send("Incorrect password");
     }
 
-    const token = jwt.sign({ student_id: studentData._id, role: "student" }, process.env.JWT_ACCESS_TOKEN, { expiresIn: "5h" });
+    const token = jwt.sign({ student_id: studentData._id, role: "student" }, process.env.JWT_ACCESS_TOKEN, { expiresIn: "24h" });
 
-    res.status(200).json({ studentData, token });
+    // set token is cookies
+    setTokenCookie(res, "token",token);
+
+    res.status(200).json({ studentData });
   } catch (error) {
     console.log("Student login error: " + error.message);
     res.status(500).send("Server error.");

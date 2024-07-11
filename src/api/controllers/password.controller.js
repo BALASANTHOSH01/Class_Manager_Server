@@ -5,13 +5,7 @@ const Institute = require("../models/institute.model.js");
 const sendEmail = require("../Services/sendEmail.js");
 const bcrypt = require("bcrypt");
 require("dotenv").config();
-
-// Generate random token
-const generateToken = () => {
-  const token = crypto.randomBytes(25).toString("hex");
-  const expires = Date.now() + 3600000; // 1 hour expiration
-  return { token, expires };
-};
+const generateToken = require("../utils/generateToken.js");
 
 // Forgot password
 exports.forgotPassword = async (req, res) => {

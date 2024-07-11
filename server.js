@@ -51,6 +51,10 @@ app.use("/api/institute", instituteRouter);
 app.use("/api", passwordRouter);
 
 
+app.get("/",(req,res)=>{
+  res.send("hello world.")
+})
+
 // Listen to the port
 app.listen(port, () => {
   console.log(`Server running on port ${port}.`);

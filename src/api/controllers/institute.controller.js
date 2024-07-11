@@ -74,3 +74,18 @@ exports.getInstituteByName = async (req, res) => {
         res.status(500).send("An error occurred while retrieving the institute.");
     }
 };
+
+exports.getInstituteByCollegeCode = async(req,res)=>{
+    const collegeCode = req.params.college_code;
+
+    if(!collegeCode){
+        res.status(409).send("College Code is required.");
+    };
+
+    const InstituteData = await Institute.findOne({college_code:collegeCode});
+    if(!InstituteData){
+        res.status(404).send("Institute is not found.");
+    };
+
+    res.send(InstituteData);
+}

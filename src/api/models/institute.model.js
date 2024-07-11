@@ -28,7 +28,8 @@ const instituteSchema = new mongoose.Schema({
     },
     college_code:{
         type:String,
-        unique:true
+        unique:true,
+        required:true
     },
     notifyParents:{
         type:Boolean,

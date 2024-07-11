@@ -6,6 +6,7 @@ const Authorization = require("../middlewares/auth.middleware.js");
 
 router.delete("/delete" , Authorization , role.allowedRole("institute") , InstituteController.deleteInstitute);
 router.patch("/update" , Authorization , role.allowedRole("institute") , InstituteController.updateInstitute);
-router.get("/:name"  , InstituteController.getInstituteByName); // get details institute by name
+router.get("/:name"  , InstituteController.getInstituteByName); // get institute details by name
+router.get("/college-code/:college_code"  , InstituteController.getInstituteByCollegeCode); // get institute details by college Code
 
 module.exports = router;
