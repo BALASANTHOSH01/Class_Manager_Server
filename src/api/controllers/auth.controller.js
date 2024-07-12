@@ -36,7 +36,7 @@ exports.staffRegister = async (req, res) => {
     // set token is cookies
     setTokenCookie(res, "token",token);
 
-    res.status(201).json({ staffData });
+    res.status(201).json({ staffData ,token});
   } catch (error) {
     console.log("Staff Register error: " + error.message);
   }
@@ -66,7 +66,7 @@ exports.staffLogin = async (req, res) => {
     // set token is cookies
     setTokenCookie(res, "token",token);
 
-    res.status(200).json({ staffData });
+    res.status(200).json({ staffData,token });
   } catch (error) {
     console.log("Staff Login error: " + error.message);
   }
@@ -97,7 +97,7 @@ exports.registerInstitute = async (req, res) => {
     // set token is cookies
     setTokenCookie(res, "token",token);
 
-    res.status(200).json({ instituteData });
+    res.status(200).json({ instituteData,token });
   } catch (error) {
     console.error("Account creation error:", error.message);
     res.status(500).send("An error occurred while creating institute account.");
@@ -128,7 +128,7 @@ exports.loginInstitute = async (req, res) => {
     // set token is cookies
     setTokenCookie(res, "token",token);
 
-    res.status(200).json({ instituteData });
+    res.status(200).json({ instituteData,token });
   } catch (error) {
     console.error("Account creation error:", error.message);
     res.status(500).send("An error occurred while creating institute account.");
@@ -170,7 +170,7 @@ exports.createStudent = async (req, res) => {
     // set token is cookies
     setTokenCookie(res, "token",token);
 
-    res.status(200).json({ studentData });
+    res.status(200).json({ studentData,token });
   } catch (error) {
     console.log("Student creation error: " + error.message);
     res.status(500).send("Server error.");
@@ -201,7 +201,7 @@ exports.loginStudent = async (req, res) => {
     // set token is cookies
     setTokenCookie(res, "token",token);
 
-    res.status(200).json({ studentData });
+    res.status(200).json({ studentData,token });
   } catch (error) {
     console.log("Student login error: " + error.message);
     res.status(500).send("Server error.");
