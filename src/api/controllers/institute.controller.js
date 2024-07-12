@@ -3,22 +3,29 @@ const Institute = require("../models/institute.model.js");
 // Update institute account
 exports.updateInstitute = async (req, res) => {
     try {
-        const {email,updates} = req.body;
-        
+        const { id, updates } = req.body;
+
         // Update institute document
-        const updatedInstitute = await Institute.findOneAndUpdate({email:email}, updates, { new: true });
+        const updatedInstitute = await Institute.findByIdAndUpdate(id, updates, { new: true });
 
         if (!updatedInstitute) {
-            return res.status(404).send("Institute not found.");
-        };
+            return res.status(404).send("Institute not found.");  // Add return to stop execution
+        }
 
-        res.status(200).send(updatedInstitute); // Send updated institute data as response
+        console.log("updated Data :"+updatedInstitute);
+
+        const { password, ...withoutPassword } = updatedInstitute.toObject(); // Use .toObject() to convert Mongoose document to plain JS object
+
+        console.log("without password : "+withoutPassword);
+
+        return res.status(200).send(withoutPassword); // Return after sending the response
 
     } catch (error) {
         console.error("Update institute error:", error.message);
-        res.status(500).send("An error occurred while updating institute.");
+        return res.status(500).send("An error occurred while updating institute.");  // Return after sending the response
     }
 };
+
 
 // Delete institute account
 exports.deleteInstitute = async (req, res) => {

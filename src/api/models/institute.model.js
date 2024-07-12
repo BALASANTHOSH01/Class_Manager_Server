@@ -50,8 +50,12 @@ const instituteSchema = new mongoose.Schema({
         type:Date,
         required:true,
         default:()=> Date.now()
+    },
+    refreshToken:{
+        type:String, 
     }
 });
+
 
 instituteSchema.pre("save",async function(next) {
     if(!this.isModified('password')) return next();

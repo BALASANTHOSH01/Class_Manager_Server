@@ -12,6 +12,8 @@ const instituteRouter = require("./src/api/routes/institute.route.js");
 const passwordRouter = require("./src/api/routes/password.route.js");
 const { HostAddress } = require("mongodb");
 
+const tokenRouter = require("./src/api/routes/token.route.js");
+
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -49,7 +51,7 @@ app.use("/api/students", studentRouter);
 app.use("/api/attendance", attendanceRouter);
 app.use("/api/institute", instituteRouter);
 app.use("/api", passwordRouter);
-
+app.use("/api/token",tokenRouter);
 
 app.get("/",(req,res)=>{
   res.send("hello world.")

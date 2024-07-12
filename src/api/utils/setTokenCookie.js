@@ -1,13 +1,11 @@
 require("dotenv").config();
-const isProduction = process.env.NODE_ENV === "production";
 
-const setTokenCookie = (res, tokenName, token, options = {}) => {
-  res.cookie(tokenName, token, {
+const setTokenCookie = (res, name, token) => {
+  const oneDay = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+  res.cookie(name, token, {
     httpOnly: true,
-    secure: isProduction, // Use secure cookies in production
-    sameSite: "Strict", // Protect against CSRF
-    ...options,
+    secure: process.env.NODE_ENV === 'production', // Set to true in production
+    sameSite: 'Strict',
+    maxAge: oneDay // Set cookie expiration to match the token expiration
   });
 };
-
-module.exports = setTokenCookie;

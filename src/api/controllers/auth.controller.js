@@ -5,6 +5,7 @@ const Institute = require("../models/institute.model.js");
 const Student = require("../models/student.model.js");
 const uniqueCodeGenerator = require("../utils/uniqueCodeGenerator.js");
 const setTokenCookie = require("../utils/setTokenCookie.js");
+const tokenGenerator = require("../utils/tokenGenerator.js");
 
 // Staff Register
 exports.staffRegister = async (req, res) => {
@@ -31,12 +32,17 @@ exports.staffRegister = async (req, res) => {
       institute,
     });
 
-    const token = jwt.sign({ staff_id: staffData._id, role:"staff" }, process.env.JWT_ACCESS_TOKEN, { expiresIn: "24h" });
+    const userData = { staff_id: staffData._id, role: "staff" };
+    const token = tokenGenerator.generateAccessToken(userData);
+    // const refreshToken = tokenGenerator.generateRefreshToken(userData);
 
-    // set token is cookies
-    setTokenCookie(res, "token",token);
+    // const saveRefreshToken = await Staff.findOneAndUpdate({email:staffData.email},{refreshToken:refreshToken});
 
-    res.status(201).json({ staffData ,token});
+    // if(!saveRefreshToken){
+    //   res.status(409).send("refersh Token is not saved.");
+    // }
+
+    res.status(201).json({ staffData, token });
   } catch (error) {
     console.log("Staff Register error: " + error.message);
   }
@@ -63,8 +69,6 @@ exports.staffLogin = async (req, res) => {
 
     const token = jwt.sign({ staff_id: staffData._id, role: "staff" }, process.env.JWT_ACCESS_TOKEN, { expiresIn: "24h" });
 
-    // set token is cookies
-    setTokenCookie(res, "token",token);
 
     res.status(200).json({ staffData,token });
   } catch (error) {
@@ -94,8 +98,6 @@ exports.registerInstitute = async (req, res) => {
 
     const token = jwt.sign({ institute_id: instituteData._id, role: "institute" }, process.env.JWT_ACCESS_TOKEN, { expiresIn: "24h" });
 
-    // set token is cookies
-    setTokenCookie(res, "token",token);
 
     res.status(200).json({ instituteData,token });
   } catch (error) {
@@ -125,8 +127,6 @@ exports.loginInstitute = async (req, res) => {
 
     const token = jwt.sign({ institute_id: instituteData._id, role: "institute" }, process.env.JWT_ACCESS_TOKEN, { expiresIn: "24h" });
 
-    // set token is cookies
-    setTokenCookie(res, "token",token);
 
     res.status(200).json({ instituteData,token });
   } catch (error) {
@@ -136,13 +136,13 @@ exports.loginInstitute = async (req, res) => {
 };
 
 // Create Student
-exports.createStudent = async (req, res) => {
+exports.createStudent = async (req, res) => { 
   try {
     const { name, rollno, email, password, department, year, section, totalPresent, totalAbsent, phoneNumber, parentNumber, batch, institute } = req.body;
 
-    if (!name || !rollno || !email || !password || !department || !year || !section || !totalPresent || !totalAbsent || !phoneNumber || !parentNumber || !batch || !institute) {
-      return res.status(409).send("All fields are required.");
-    }
+    // if (!name || !rollno || !email || !password || !department || !year || !phoneNumber || !parentNumber || !institute) {
+    //   return res.status(409).send("All fields are required.");
+    // }
 
     const isExist = await Student.findOne({ email });
     if (isExist) {
@@ -157,7 +157,7 @@ exports.createStudent = async (req, res) => {
       department,
       year,
       section,
-      totalPresent,
+      totalPresent, 
       totalAbsent,
       phoneNumber,
       parentNumber,
@@ -167,8 +167,6 @@ exports.createStudent = async (req, res) => {
 
     const token = jwt.sign({ student_id: studentData._id, role: "student" }, process.env.JWT_ACCESS_TOKEN, { expiresIn: "24h" });
 
-    // set token is cookies
-    setTokenCookie(res, "token",token);
 
     res.status(200).json({ studentData,token });
   } catch (error) {
@@ -198,8 +196,6 @@ exports.loginStudent = async (req, res) => {
 
     const token = jwt.sign({ student_id: studentData._id, role: "student" }, process.env.JWT_ACCESS_TOKEN, { expiresIn: "24h" });
 
-    // set token is cookies
-    setTokenCookie(res, "token",token);
 
     res.status(200).json({ studentData,token });
   } catch (error) {

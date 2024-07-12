@@ -36,7 +36,6 @@ const studentSchema = new mongoose.Schema({
     },
     section:{
         type:String,
-        lowercase:true,
         trim:true
     },
     totalPresent:{
@@ -80,6 +79,9 @@ const studentSchema = new mongoose.Schema({
         type:Date,
         required:true,
         default:()=> Date.now()
+    },
+    refreshToken:{
+        type:String, 
     }
 });
 
