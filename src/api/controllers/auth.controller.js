@@ -7,13 +7,13 @@ const uniqueCodeGenerator = require("../utils/uniqueCodeGenerator.js");
 const setTokenCookie = require("../utils/setTokenCookie.js");
 const tokenGenerator = require("../utils/tokenGenerator.js");
 
-// Staff Register
+// Staff Register 
 exports.staffRegister = async (req, res) => {
   try {
     const role = "staff";
-    const { name, email, password, phoneNumber, depart, year, section, institute } = req.body;
+    const { name, email, password, phoneNumber, department, year, section, institute } = req.body;
 
-    if (!name || !email || !password || !phoneNumber || !institute) {
+    if (!name || !email || !password || !department || !phoneNumber || !institute) {
       return res.status(409).send("All fields are required.");
     }
 
@@ -28,7 +28,7 @@ exports.staffRegister = async (req, res) => {
       password,
       phoneNumber,
       role,
-      assigned_sections: { department: depart, year, section },
+      assigned_sections: { department: department, year, section },
       institute,
     });
 
@@ -140,9 +140,9 @@ exports.createStudent = async (req, res) => {
   try {
     const { name, rollno, email, password, department, year, section, totalPresent, totalAbsent, phoneNumber, parentNumber, batch, institute } = req.body;
 
-    // if (!name || !rollno || !email || !password || !department || !year || !phoneNumber || !parentNumber || !institute) {
-    //   return res.status(409).send("All fields are required.");
-    // }
+    if (!name || !rollno || !email || !password || !department || !year || !phoneNumber || !parentNumber || !institute) {
+      return res.status(409).send("All fields are required.");
+    }
 
     const isExist = await Student.findOne({ email });
     if (isExist) {
