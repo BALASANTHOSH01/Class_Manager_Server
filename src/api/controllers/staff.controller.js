@@ -63,6 +63,7 @@ exports.getStaff = async (req,res)=>{
     try {
         const institute = req.instituteId;
         const email = req.params.email;
+
         const StaffData = await Staff.findOne({ email:email, institute:institute });
         if(!StaffData){
             return res.status(404).send("Staff not found");
@@ -73,3 +74,25 @@ exports.getStaff = async (req,res)=>{
         res.status(500).send("Server error.");
     }
 };
+
+exports.getStaffByName = async (req,res) =>{
+    try {
+        const {staffName,institute} = req.body;
+        
+        if(!staffName || !institute){
+            res.status(409).send("staffName is required.");
+        }
+
+        const StaffData = await Staff.findOne({name:staffName,institute:institute});
+
+        if(!StaffData){
+            return res.status(404).send("Staff not found.");
+        }
+
+        res.status(200).send(StaffData);
+        
+    } catch (error) {
+        console.log("Getting staff error "+error.message);
+        res.status(500).send("Server error.");
+    }
+}

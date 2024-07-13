@@ -51,8 +51,8 @@ exports.createManyStudents = async (req, res) => {
 // Get student by "rollno"
 exports.getStudentByRollno = async (req, res) => {
   try {
-    const institute = req.instituteId; // institute id
-    const rollno = req.params.rollno;
+    const {institute,rollno} = req.params; // institute id
+
     const StudentData = await Student.findOne({
       rollno: rollno,
       institute: institute,

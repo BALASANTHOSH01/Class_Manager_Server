@@ -10,6 +10,8 @@ router.delete("/:email",Authorization,role.allowedRole("institute", "staff"),sta
 router.patch("/:email",Authorization,role.allowedRole("institute", "staff"),staff.updateStaff); //update staff
 router.post("/register",Authorization,role.allowedRole("institute", "staff"),auth.staffRegister); // create new staff
 router.get("/:email",Authorization,role.allowedRole("institute", "staff"),staff.getStaff); // login staff 
+router.get("/name",Authorization,role.allowedRole("institute", "staff"),staff.getStaffByName); // login staff 
+
 
 // Notification routes
 router.get("/notifications"); // get notifications

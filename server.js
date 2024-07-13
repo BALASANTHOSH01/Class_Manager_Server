@@ -8,6 +8,8 @@ const staffRouter = require("./src/api/routes/staff.route.js"); //staff router
 const attendanceRouter = require("./src/api/routes/attendance.route.js");
 const studentRouter = require("./src/api/routes/student.route.js");
 const instituteRouter = require("./src/api/routes/institute.route.js");
+const searchRouter = require("./src/api/routes/search.route.js");
+
 // const smsScheduler = require("./src/api/Schedule/smsScheduler.js");
 const passwordRouter = require("./src/api/routes/password.route.js");
 const { HostAddress } = require("mongodb");
@@ -51,7 +53,7 @@ app.use("/api/students", studentRouter);
 app.use("/api/attendance", attendanceRouter);
 app.use("/api/institute", instituteRouter);
 app.use("/api", passwordRouter);
-app.use("/api/token",tokenRouter);
+app.use("/api/search",searchRouter);
 
 app.get("/",(req,res)=>{
   res.send("hello world.")

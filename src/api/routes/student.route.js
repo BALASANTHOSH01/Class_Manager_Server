@@ -6,7 +6,7 @@ const role = require("../middlewares/role.middleware.js");
 
 router.post("/create-many", Authorization, role.notAllowedRole("student"), role.allowedRole("institute", "staff"), Student.createManyStudents);
 
-router.get("/:rollno", Authorization, role.allowedRole("institute", "staff", "student"), Student.getStudentByRollno);
+router.post("/:institute/:rollno", Authorization, role.allowedRole("institute", "staff", "student"), Student.getStudentByRollno);
 
 router.get("/:department/:year", Authorization, role.allowedRole("institute", "staff"), Student.getStudentByDeptandYear);
 

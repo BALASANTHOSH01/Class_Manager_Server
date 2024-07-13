@@ -51,16 +51,12 @@ exports.deleteInstitute = async (req, res) => {
 exports.getInstituteByName = async (req, res) => {
     try {
         let name = req.params.name;
-        console.log("college name"+name)
-        if (!name) {
-            return res.status(409).send("Name is required.");
-        }
-        
-        
-       // Create a regex pattern for partial matching
-       const regex = new RegExp(name, 'i'); // 'i' for case-insensitive
 
-       const instituteData = await Institute.find({ name: regex });
+        if (!name) {
+            return res.status(409).send("Institute name is required.");
+        }
+
+       const instituteData = await Institute.findOne({ name: name });
        if (!instituteData.length) {
            return res.status(404).send("Institute is not found.");
        }

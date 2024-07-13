@@ -140,9 +140,9 @@ exports.createStudent = async (req, res) => {
   try {
     const { name, rollno, email, password, department, year, section, totalPresent, totalAbsent, phoneNumber, parentNumber, batch, institute } = req.body;
 
-    if (!name || !rollno || !email || !password || !department || !year || !phoneNumber || !parentNumber || !institute) {
-      return res.status(409).send("All fields are required.");
-    }
+    // if (!name || !rollno || !email || !password || !department || !year || !phoneNumber || !parentNumber || !institute) {
+    //   return res.status(409).send("All fields are required.");
+    // }
 
     const isExist = await Student.findOne({ email });
     if (isExist) {
