@@ -8,10 +8,23 @@ const setTokenCookie = require("../utils/setTokenCookie.js");
 const tokenGenerator = require("../utils/tokenGenerator.js");
 
 // Staff Register 
-exports.staffRegister = async (req, res) => {
+exports.staffRegister = async (req, res) => { 
   try {
     const role = "staff";
     const { name, email, password, phoneNumber, department, year, section, institute } = req.body;
+
+    const Details = {
+      name,
+      email,
+      password,
+      phoneNumber,
+      department,
+      institute
+    };
+
+    Object.values(Details).map((details)=>{
+      console.log("details : "+details);
+    })
 
     if (!name || !email || !password || !department || !phoneNumber || !institute) {
       return res.status(409).send("All fields are required.");

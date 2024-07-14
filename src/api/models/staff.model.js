@@ -23,15 +23,11 @@ const staffSchema = new mongoose.Schema({
         required:true,
         trim:true
     },
-    role:{
-        type:String,
-        enum: ['staff', 'HOD'],
-        trim:true
-    },
     assigned_sections:{
         department: {
             type: String,
             ref: "Department",  // Assuming you have a Department model
+            required:true,
       
         },
         year: {
