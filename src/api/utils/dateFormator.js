@@ -6,7 +6,7 @@ const formatDate = (dateStr) => {
     const formats = ["DD-MM-YYYY", "DD/MM/YYYY", "YYYY-MM-DD"];
     let date;
 
-    for (const format of formats) {
+    for (const format of formats) {  
         date = moment(dateStr, format, true);
         if (date.isValid()) {
             return date.format("YYYY-MM-DD"); // Convert to ISO 8601 format

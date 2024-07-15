@@ -6,7 +6,7 @@ const attendanceRecordSchema = new mongoose.Schema({
         required:true,
         trim:true
     },
-    date:{
+    date:{ 
         type:Date,
         required:true
     },

@@ -530,19 +530,22 @@ exports.getAttendanceByRollno = async (req, res) => {
   } catch (error) {
     console.log("Attendance getting error: " + error.message);
     res.status(500).send("An error occurred while retrieving attendance.");
-  }
-};
+  } 
+}; 
 
 // Get attendance by date
-exports.getAttendanceByDate = async (req, res) => {
+exports.getAttendanceByDate = async (req, res) => {  
   try {
     const date = DateFormator(req.params.date);
     const institute = req.instituteId;
+''
+    console.log("date :"+date +" "+ "InstituteID :"+institute);
 
     // Validation
     if (!date || !institute) {
       return res.status(400).send("Date and institute are required.");
     }
+
 
     // Find attendance by date
     const AttendanceList = await Attendance.find({
@@ -555,14 +558,19 @@ exports.getAttendanceByDate = async (req, res) => {
       .populate("student", "name rollno department year")
       .populate({
         path: 'attendance.staff',
-        select: 'name' // Add other fields as needed
+        select: 'name' // Add other fields as needed 
       });
 
     if (!AttendanceList || AttendanceList.length === 0) {
       return res.status(404).send("Attendance is not taken on this date.");
     }
 
-    res.status(200).send(AttendanceList); // response
+    Object.values(AttendanceList).map((details)=>{
+      console.log("attendance Data : "+details);
+    })
+
+
+    res.status(200).send(AttendanceList); // response 
   } catch (error) {
     console.log("Attendance getting error: " + error.message);
     res.status(500).send("An error occurred while retrieving attendance.");
